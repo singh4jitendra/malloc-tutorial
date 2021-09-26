@@ -1,0 +1,77 @@
+- Malloc actually not allocate memory in physical memory but rather than on disk untill it's got accessed.
+
+
+##Observation-1:
+#define ONE_GB (1<<30)
+#include <unistd.h>
+
+void main()
+{
+	int cnt=0;
+	while(1)
+	{
+		char *d = malloc(ONE_GB);
+		if(d){
+		cnt++;
+			printf("%d GB Allocated\n",cnt);
+		}
+		else
+		break;
+	}
+			printf("\nStopped after Allocating : %dGB",cnt);
+
+
+}
+
+jitendr2@RTPSF11UDT-0227:~$ ./malloc
+1 GB Allocated
+2 GB Allocated
+...
+31059 GB Allocated
+131060 GB Allocated
+131061 GB Allocated
+
+Stopped after Allocating : 131061GB
+
+
+
+
+#define ONE_GB (1<<30)
+#include <unistd.h>
+
+void main()
+{
+	int cnt=0;
+	while(1)
+	{
+		char *d = malloc(ONE_GB);
+		if(d){
+		cnt++;
+			printf("%d GB Allocated\n",cnt);
+			memset(d,0,ONE_GB);             <<<<<<<<<<<<<< accessing here
+		}
+		else
+		break;
+	}
+			printf("\nStopped after Allocating : %dGB",cnt);
+
+
+}
+
+jitendr2@RTPSF11UDT-0227:~$ ./malloc
+1 GB Allocated
+2 GB Allocated
+...
+27 GB Allocated
+28 GB Allocated
+29 GB Allocated
+
+Stopped after Allocating : 29GB
+jitendr2@RTPSF11UDT-0227:~$ 
+
+
+
+
+
+##Observation-2:
+
